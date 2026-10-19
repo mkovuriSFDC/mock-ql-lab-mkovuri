@@ -7,6 +7,7 @@ surface: security
 origin: scopezilla
 source: ptsf-scoping-2026#INT-003
 title: Let patients and practitioners see only their own slice of the data
+ratified: 2026-10-19 by madhuri @ ec4093237f07
 ---
 
 # INT-003 — Let patients and practitioners see only their own slice of the data
