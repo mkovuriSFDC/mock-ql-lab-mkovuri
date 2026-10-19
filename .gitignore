@@ -1,0 +1,104 @@
+# Salesforce DX
+.sfdx/
+.sf/
+.localdevserver/
+deploy-options.json
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editors
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+
+# Bootstrap state
+.bootstrap-state
+
+# Per-machine local Claude settings (never tracked).
+.claude/settings.local.json
+
+# Per-machine debounce stamps for the SessionStart nudges (install / drift).
+.claude/.skills-freshness-check
+.claude/.skills-drift-check
+.claude/.resync-drift-check
+
+# Per-machine setup state: Scopezilla source location + pending setup steps
+# (decisions/0071). The engagement profile beside it (engagement.json) IS tracked.
+.launchpad/local.json
+# Build briefs are generated per build and never committed; the PR carries their
+# stamp line instead (decisions/0082 W6).
+.launchpad/briefs/
+
+# Note: .agents/ and .claude/skills/* ARE tracked once a consultant
+# intentionally adds them (e.g. via `npx skills add forcedotcom/sf-skills`).
+# That way the engagement repo distributes the skill bodies the pod is
+# actually using, not just skills-lock.json. Keep them out of .gitignore —
+# unless .launchpad/repo.json sets commit_skills: false, in which case
+# /ql-init-engagement appends an ignore block for them below (decisions/0072).
+
+# ---- Salesforce DX (from sf project generate) ----
+# This file is used for Git repositories to specify intentionally untracked files that Git should ignore. 
+# If you are not using git, you can delete this file. For more information see: https://git-scm.com/docs/gitignore
+# For useful gitignore templates see: https://github.com/github/gitignore
+
+# Salesforce cache
+.sf/
+.sfdx/
+.localdevserver/
+deploy-options.json
+
+# LWC VSCode autocomplete
+**/lwc/jsconfig.json
+
+# LWC Jest coverage reports
+coverage/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories
+node_modules/
+
+# ApexPMD cache
+.pmdCache
+
+# Eslint cache
+.eslintcache
+
+# MacOS system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Local environment variables
+.env
+
+# Python Salesforce Functions
+**/__pycache__/
+**/.venv/
+**/venv/

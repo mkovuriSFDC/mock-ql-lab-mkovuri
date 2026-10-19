@@ -1,0 +1,226 @@
+name: Intent trust chain
+
+# The scope↔delivery trust-chain gates — the Launchpad-unique checks that prove
+# work traces to Intent and is proven. These need NO Salesforce org (pure git +
+# node), so they ship into EVERY engagement regardless of which deploy pipeline
+# it uses (the simple sf-validate/sf-deploy pair, or the multi-stage feature-ci_*
+# / feature-release-test_* set). Keep them here, separate from the org-authed
+# deploy validation, so choosing a deploy pipeline never strips the trust chain.
+#
+# Split out of the old sf-validate.yml (which entangled these gates with a
+# check-only deploy) — see the plugin's decisions/0012 and issue #57.
+
+on:
+  pull_request:
+    # These gates are cheap (git + node, no org) and SHOULD run on intent edits —
+    # that's their job — and on ANY source dir so the FLS advisory covers a custom
+    # packageDirectories path, not just force-app/ (issue #64). So trigger via
+    # `paths-ignore`, omitting only what can't affect the trust chain: the
+    # tooling/harness dirs. (Contrast sf-validate,
+    # the expensive org deploy, which additionally skips intent/doc-only PRs.)
+    paths-ignore:
+      - ".claude/**"        # skills, settings
+      - ".agents/**"        # vendored skills
+      - ".cursor/**"        # harness config
+      - ".vscode/**"        # editor config
+      - "skills-lock.json"  # vendored-skills lock
+
+jobs:
+  trust-chain:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # need the base ref for the FLS diff
+
+      # Resolve the deployable package directories from sfdx-project.json so the
+      # FLS advisory's field diff isn't hardcoded to force-app/ (issue #64).
+      # FAIL CLOSED, correctly: when we can't scope to specific subdirs (missing/
+      # unparseable file, no packageDirectories, or a ROOT "." package),
+      # scope_all=true → the FLS diff spans the whole repo rather than guessing
+      # force-app/ (which would silently skip a custom-dir repo's fields).
+      - name: Resolve package directories
+        id: resolve-dirs
+        run: |
+          node -e '
+            const fs = require("fs");
+            let dirs = null;
+            try {
+              const p = JSON.parse(fs.readFileSync("sfdx-project.json", "utf8"));
+              dirs = (p.packageDirectories || [])
+                .map(d => String((d && d.path) || "").replace(/^\.\//, "").replace(/\/+$/, ""))
+                .filter(s => s !== "");
+            } catch (e) { dirs = null; }
+            const out = process.env.GITHUB_OUTPUT;
+            const scopeAll = dirs === null || dirs.length === 0 || dirs.some(d => d === ".");
+            if (scopeAll) {
+              fs.appendFileSync(out, "scope_all=true\npkg_dirs=\n");
+              console.log("Package directories: <whole repo>");
+              process.exit(0);
+            }
+            fs.appendFileSync(out, `scope_all=false\npkg_dirs=${dirs.join(" ")}\n`);
+            console.log("Resolved package directories: " + dirs.join(" "));
+          '
+
+      # Which engagements this PR gates (decisions/0082 W1). Every Launchpad file
+      # lives under launchpad/, one folder per engagement. An open engagement the
+      # PR touches is gated; a PR that touches anything outside the engagement
+      # folders (force-app/, shared scripts, workflows) gates every open one. A
+      # closed engagement is the frozen audit record: never gated, and this step
+      # FAILS a PR that changes it (closing or reopening is the only exception).
+      # The rules live in the engine, so this YAML only loops over its answer.
+      - name: Engagements to gate
+        id: engs
+        if: hashFiles('launchpad/scripts/intent-ledger.mjs') != ''
+        run: |
+          list=$(node launchpad/scripts/intent-ledger.mjs engagements --base "origin/${GITHUB_BASE_REF}")
+          echo "Gating: ${list:-<none>}"
+          echo "list=$(echo $list)" >> "$GITHUB_OUTPUT"
+
+      # The safety net for living intent files. A malformed intent.md (bad
+      # frontmatter, renamed heading, dangling/inverted dependency) can make drift
+      # detection unreliable, so this gate runs FIRST and fails the PR on any
+      # structural problem. The engine no-ops cleanly before the first intent.
+      - name: Validate intent files
+        if: steps.engs.outputs.list != ''
+        env:
+          ENGS: ${{ steps.engs.outputs.list }}
+        run: |
+          for slug in $ENGS; do
+            echo "── $slug"
+            LAUNCHPAD_ENGAGEMENT="$slug" node launchpad/scripts/intent-ledger.mjs validate
+          done
+
+      # Fails the PR if merging it would REMOVE a ✅ Delivered stamp the base
+      # branch already has. This is the stale-branch clobber, and it is the one
+      # ledger failure every other gate here is blind to: `validate`, `drift` and
+      # `coverage --gate` all pass happily on a ledger that has simply forgotten
+      # it delivered something, because an un-stamped row has nothing to verify.
+      #
+      # Runs BEFORE drift, since drift on a clobbered table is meaningless.
+      # Delivered → 🔄 Needs re-verify is allowed (that's drift doing its job).
+      #
+      # GITHUB_BASE_REF is GitHub's own built-in env var for the PR base branch,
+      # used here instead of a `$`-brace expression so no template value is ever
+      # interpolated into the shell.
+      - name: Check for delivery-stamp regression
+        if: steps.engs.outputs.list != ''
+        env:
+          ENGS: ${{ steps.engs.outputs.list }}
+        # No working-tree guard on the ledger: a DELETED ledger is the largest
+        # regression there is, and a "[ -f ]" test here would skip the check in
+        # exactly that case. The command handles both ends itself — it skips when
+        # the base has no ledger (first ingest) and fails when the base has stamps
+        # this branch no longer carries.
+        run: |
+          for slug in $ENGS; do
+            echo "── $slug"
+            LAUNCHPAD_ENGAGEMENT="$slug" node launchpad/scripts/intent-ledger.mjs regression --base "origin/${GITHUB_BASE_REF}"
+          done
+
+      # Fails the check if a delivered intent's recorded scope hash no longer
+      # matches the living intent text — scope moved after delivery (upstream
+      # reconcile or in-repo refinement). SCOPED to the intents THIS PR touched
+      # (issue #91): a stale hash on an intent the PR never touched (base moved,
+      # an unrelated refine) is surfaced as a ::warning::, not a hard fail, so one
+      # intent's drift can't red every other intent's PR. In-progress intents are
+      # not drift-checked at all — editing the intent you're building is expected.
+      # No-ops cleanly if the engagement has no ledger yet (pre-first-ingest).
+      - name: Check intent-ledger drift
+        if: steps.engs.outputs.list != ''
+        env:
+          ENGS: ${{ steps.engs.outputs.list }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          for slug in $ENGS; do
+            echo "── $slug"
+            dir="launchpad/engagements/$slug"
+            if [ -f "$dir/delivery/intent-ledger.md" ]; then
+              mapfile -t touched < <(git diff --name-only "origin/${BASE_REF}...HEAD" -- "$dir/intents/**" | grep -oiE 'INT-[0-9]+[a-z]?' | tr '[:lower:]' '[:upper:]' | sort -u)
+              LAUNCHPAD_ENGAGEMENT="$slug" node launchpad/scripts/intent-ledger.mjs drift --only "$(IFS=,; echo "${touched[*]}")"
+            else
+              echo "No $dir/delivery/intent-ledger.md yet — skipping drift check."
+            fi
+          done
+
+      # ADVISORY (never fails the build). Each engagement README's Delivery index
+      # is a DERIVED, never-hand-edited view of its ledger — the same status
+      # renders fine in the ledger table right beside it. Gating a human on its
+      # byte-exactness is the anti-pattern this check used to be (see the plugin's
+      # decisions/0013): it blocked non-dev PRs after an intent-ledger.md
+      # merge/rebase — often for ledger rows the PR author never touched (base
+      # moved) — with a fix that meant understanding a derived view and running a
+      # node script. Now it warns: the canonical ledger still hard-gates
+      # (validate/drift/coverage above), and the index self-heals on the next
+      # `deliver`/`refine`/`ingest` regen, so a stale index is a short cosmetic lag
+      # on main, never a correctness gap.
+      - name: README delivery index advisory
+        if: steps.engs.outputs.list != ''
+        env:
+          ENGS: ${{ steps.engs.outputs.list }}
+        run: |
+          for slug in $ENGS; do
+            dir="launchpad/engagements/$slug"
+            if [ -d "$dir/intents" ] && [ -f "$dir/README.md" ]; then
+              LAUNCHPAD_ENGAGEMENT="$slug" node launchpad/scripts/intent-ledger.mjs index --write
+              if ! git diff --quiet -- "$dir/README.md"; then
+                echo "::warning::$dir/README.md delivery index is stale — it will refresh on the next ledger command (deliver/refine/ingest), or run: node launchpad/scripts/intent-ledger.mjs index --write --engagement $slug, then commit it."
+                git --no-pager diff -- "$dir/README.md"
+              else
+                echo "$slug: README delivery index is current."
+              fi
+            fi
+          done
+
+      # Fails if any intent the ledger marks ✅ Delivered lacks a current, complete
+      # test script (per-intent validation plan at intents/INT-NNN/test-script.md).
+      # "Shipped = proven." A drifted or incomplete script for a Delivered intent
+      # fails; manual criteria still awaiting human sign-off are warned, not failed
+      # (sign-off legitimately trails a merge). No-ops before the first ingest.
+      #
+      # This is the STRUCTURAL gate — fast, needs no org. When a deploy pipeline is
+      # configured, its org-authed validation adds the deeper CI-PROOF confirmation
+      # (each ✅ criterion's named test actually ran green); this gate stands alone
+      # and always runs, so the trust chain holds even before any org is wired.
+      - name: Check test-script coverage for delivered intents
+        if: steps.engs.outputs.list != ''
+        env:
+          ENGS: ${{ steps.engs.outputs.list }}
+        run: |
+          for slug in $ENGS; do
+            echo "── $slug"
+            dir="launchpad/engagements/$slug"
+            if [ -d "$dir/intents" ] && [ -f "$dir/delivery/intent-ledger.md" ]; then
+              LAUNCHPAD_ENGAGEMENT="$slug" node launchpad/scripts/intent-ledger.mjs coverage --gate
+            else
+              echo "No $dir intents/ledger yet — skipping test-script coverage check."
+            fi
+          done
+
+      # FLS advisory (cascading consequences). Non-blocking: warns when a changed
+      # custom field has no FLS in any permission set — the cheapest-to-miss ripple
+      # (see AGENTS.md). Never fails the build; surfaces as an annotation. The local
+      # husky hook catches this pre-commit; this is the can't-be-skipped backstop.
+      # Needs no org — a pure metadata diff — so it lives here with the trust chain.
+      - name: FLS advisory (cascading consequences)
+        if: hashFiles('launchpad/scripts/check-fls.mjs') != ''
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          PKG_DIRS: ${{ steps.resolve-dirs.outputs.pkg_dirs }}
+          SCOPE_ALL: ${{ steps.resolve-dirs.outputs.scope_all }}
+        run: |
+          # One git pathspec per resolved package dir, so custom dirs (src/, …) aren't
+          # skipped by the FLS advisory (issue #64). scope_all → span the whole repo.
+          # PKG_DIRS via env (data), not a `$`-brace expression (shell source) — so a path can't inject.
+          pathspecs=()
+          if [ "$SCOPE_ALL" = "true" ]; then
+            pathspecs+=("**/objects/**/fields/*.field-meta.xml")
+          else
+            for d in $PKG_DIRS; do
+              pathspecs+=("$d/**/objects/**/fields/*.field-meta.xml")
+            done
+          fi
+          mapfile -t fields < <(git diff --name-only --diff-filter=d "origin/${BASE_REF}...HEAD" -- "${pathspecs[@]}")
+          if [ ${#fields[@]} -gt 0 ]; then
+            node launchpad/scripts/check-fls.mjs "${fields[@]}"
+          fi

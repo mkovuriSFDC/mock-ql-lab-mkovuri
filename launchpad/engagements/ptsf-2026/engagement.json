@@ -1,0 +1,15 @@
+{
+  "schema_version": 2,
+  "kind": "training",
+  "status": "open",
+  "intent_storage": "repo",
+  "sources": [
+    {
+      "name": "ptsf-scoping-2026",
+      "scopezilla_slug": "ptsf-lab",
+      "role": "primary",
+      "cursor": "8eb2432b0381ea6db51dc4c1c808653430203e34",
+      "tied_at": "2026-10-19"
+    }
+  ]
+}

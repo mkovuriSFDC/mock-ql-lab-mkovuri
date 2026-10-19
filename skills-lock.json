@@ -1,0 +1,159 @@
+{
+  "version": 1,
+  "skills": {
+    "ql-analyze-intents": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-analyze-intents/SKILL.md",
+      "computedHash": "a558bfcdfad84e21e038a6b0a57908d16f1267e46b326f3185a6e4111a06fe89"
+    },
+    "ql-capability-map": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-capability-map/SKILL.md",
+      "computedHash": "8918feba7eca6b3309458a25da5fb130d152e55ed21c492787ef7e4d29414535"
+    },
+    "ql-capture-intent": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-capture-intent/SKILL.md",
+      "computedHash": "d9aeb9eaec11eb4ea45fe06d607d8bf54452c635b713bf449cedaf2fa308d1c8"
+    },
+    "ql-check-scope": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-check-scope/SKILL.md",
+      "computedHash": "cf271cef715bac94b5982bc0ea51279d7a2f52c2e9433cdf1dff1e1fc19fcaf1"
+    },
+    "ql-close-engagement": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-close-engagement/SKILL.md",
+      "computedHash": "eeb9bac807cc0bf97716640c7cf0d3c23b3653bed96c974cff8a8db42b10f893"
+    },
+    "ql-delivery-metrics": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-delivery-metrics/SKILL.md",
+      "computedHash": "ffdb08ba164447915e5db7e88b763ab6ac5afc727eea569a63e9af90a181929a"
+    },
+    "ql-design-intent": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-design-intent/SKILL.md",
+      "computedHash": "b45c3ac2390c8b14c40bfb74bf1ce55cdbab7ca4ef3360509937932754daea8b"
+    },
+    "ql-diagnose": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-diagnose/SKILL.md",
+      "computedHash": "5bf3bf5f327d582009bfcfe62b2d828c351523799020d32a883811c036a64def"
+    },
+    "ql-drive-meshmesh": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-drive-meshmesh/SKILL.md",
+      "computedHash": "c5028c1bbd73b2be276460d0f4391d4a03b61f44757bf30ea03643003f024c78"
+    },
+    "ql-generate-deployment-plan": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-generate-deployment-plan/SKILL.md",
+      "computedHash": "d6c9496c388db2f08bf8d46aa31ec5a48bc6d80c52bcb8d71706d3054bedb24f"
+    },
+    "ql-grill-intents": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-grill-intents/SKILL.md",
+      "computedHash": "13c919e63fab0702af307c0edb5328c84f78ba1f6afd801b65b8de718599a3ab"
+    },
+    "ql-guide": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-guide/SKILL.md",
+      "computedHash": "e31b9524dea3d4cf9bcd552995d2be02fa3c7f798dc065e0b09a844818e294fd"
+    },
+    "ql-ingest-scopezilla": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-ingest-scopezilla/SKILL.md",
+      "computedHash": "2dea4950a25aebfbcff805a50e1cad566adb64f5da36302557e13bc176184b45"
+    },
+    "ql-record-test-execution": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-record-test-execution/SKILL.md",
+      "computedHash": "7725a34343257d485fed09bc7309c0162fbad8247e8cf0786806583889d6c373"
+    },
+    "ql-refine-intent": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-refine-intent/SKILL.md",
+      "computedHash": "0a0e76f194624e2c03c61a076872a5f619b5931faad35528d5f6e9a6bfd66ce9"
+    },
+    "ql-setup": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-setup/SKILL.md",
+      "computedHash": "b471b53bbb9cdb789d3aec2c21fea1be44bf42cb340a3616aa75a46d15890154"
+    },
+    "ql-slack-notifications-setup": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-slack-notifications-setup/SKILL.md",
+      "computedHash": "1bafe4931111da28beb675f6c5f35a9f3a7e06d9f2d70bbe020c69f4772e4b5c"
+    },
+    "ql-start-intent": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-start-intent/SKILL.md",
+      "computedHash": "491b2966c319edff0781ed208c830be964b16f437bf39514cc23b17d8bfc3c4e"
+    },
+    "ql-sync-jira": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-sync-jira/SKILL.md",
+      "computedHash": "886cede6644f96197994d8e4696c1b9a650d6dee09aa0cf8bb4b96b7d398d4ac"
+    },
+    "ql-test-script": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-test-script/SKILL.md",
+      "computedHash": "a0b44f90e6f163fdc68d6367df248a2f376b39f98a70c15e016e1e19b9c13af5"
+    },
+    "ql-verify-build": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-verify-build/SKILL.md",
+      "computedHash": "f9b4109b054cc37ca37545489cdf823958da4db4ee27828906ba86b3c9c915fc"
+    },
+    "ql-vet-intent": {
+      "source": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceUrl": "https://git.soma.salesforce.com/dgerow/quantum-leap-launchpad.git",
+      "sourceType": "git",
+      "skillPath": "plugins/quantum-leap-launchpad/skills/ql-vet-intent/SKILL.md",
+      "computedHash": "4bcee230742f9d66bbfce04f43d1bb0525e0646cee2af73d6126ba1e299b9e5e"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "commit_skills": true,
+  "toolkits": [
+    "sf-pi",
+    "sf-skills"
+  ],
+  "sf_skills": "skills",
+  "add_ons": [
+    {
+      "id": "deploy-simple",
+      "configured": true
+    },
+    {
+      "id": "salesforce-docs-labs",
+      "configured": true
+    }
+  ],
+  "add_ons_offered": [
+    "deploy-multistage",
+    "deploy-simple",
+    "salesforce-docs-labs",
+    "slack-notifications"
+  ]
+}

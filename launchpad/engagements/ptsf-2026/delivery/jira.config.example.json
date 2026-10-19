@@ -1,0 +1,87 @@
+{
+  "_comment": "Project-tracker projection mappings for /ql-sync-jira. Copy to jira.config.json (or let /ql-sync-jira create it on first run, discovering custom-field IDs). Commit jira.config.json — it holds NO secrets and NO auth. The projection flow is tracker-neutral behind a per-tracker adapter (see decisions/0046); Jira and Azure DevOps (the \"ado\" block below) are the adapters shipped. Jira has two transports (see decisions/0011): the Atlassian Remote MCP (OAuth, browser login — the default) or an API token (for customers who block third-party MCP OAuth but allow create-your-own tokens). The API token itself NEVER goes here — it comes from the JIRA_EMAIL/JIRA_API_TOKEN env vars.",
+
+  "_tracker": "Which project-tracker adapter drives the projection: \"jira\" (default when absent) or \"ado\" (Azure DevOps Boards). A new tracker is a drop-in adapter per the contract in the ql-sync-jira skill's references/adapter-contract.md — no change to the sync flow. The top-level keys below (transport, base_url, project_key, issue_types, status_map, fields, labels) are Jira-adapter config; the Azure DevOps adapter reads only the \"ado\" block at the end. Keep the block for the tracker you use; the other is ignored.",
+  "tracker": "jira",
+
+  "_transport": "Which pen /ql-sync-jira uses to write the SAME projection: \"mcp\" (Atlassian Remote MCP, OAuth) or \"api\" (Jira Cloud REST v3, API token via launchpad/scripts/jira-rest.mjs). /ql-setup probes MCP first and records the reachable one. Default \"mcp\".",
+  "transport": "mcp",
+
+  "_base_url": "API transport ONLY — the customer's Jira site, e.g. https://acme.atlassian.net. Omit/blank for the MCP transport (OAuth resolves the site). Non-secret; the token lives in JIRA_API_TOKEN, never here.",
+  "base_url": "",
+
+  "project_key": "ABC",
+
+  "_issue_types": "Jira issue-type NAMES for each projected level. Vary per project.",
+  "issue_types": {
+    "epic": "Epic",
+    "intent": "Story",
+    "open_question": "Sub-task"
+  },
+
+  "_status_map": "Ledger status token (emoji) -> Jira workflow status NAME. Names are per-project. The repo/ledger is the only writer of delivery status — this just mirrors it.",
+  "status_map": {
+    "⬜": "To Do",
+    "🔧": "In Progress",
+    "✅": "Done",
+    "🔄": "To Do",
+    "🚫": "Won't Do"
+  },
+
+  "_fields": "Per-instance custom-field IDs (e.g. customfield_10014). /ql-sync-jira discovers these by field name from the issue type's field list; leave blank to let it fill them. scope_hash/intent_id are optional stamps — identity still works via the intent:<id> label without them. (No epic_link here: stories are linked to epics via the issue parent in the create call.)",
+  "fields": {
+    "scope_hash": "",
+    "intent_id": ""
+  },
+
+  "labels": {
+    "intent_prefix": "intent:",
+    "open_question_prefix": "open-question:",
+    "scope_drift": "scope-drift"
+  },
+
+  "_ado": "Azure DevOps adapter config (tracker: \"ado\"). Tested on Azure DevOps Services. Azure DevOps Server may differ; it is untested. No secrets here either: the MCP transport signs in as you (az login / browser), and the API transport reads ADO_PAT (or ADO_TOKEN) from the environment.",
+  "ado": {
+    "_transport": "\"mcp\" (the Azure DevOps MCP, @azure-devops/mcp — the default) or \"api\" (ADO REST via launchpad/scripts/ado-rest.mjs, with a PAT scoped to Work Items: Read & write and Project and Team: Read). Both draw the same projection (decisions/0011). /ql-setup records the reachable one.",
+    "transport": "mcp",
+
+    "_org_url": "The organization (https://dev.azure.com/<org>) or an Azure DevOps Server collection (https://<host>/<collection>; untested). The API transport sends requests here; the MCP transport is launched with the org name, and this confirms it points at the same org.",
+    "org_url": "",
+
+    "project": "",
+
+    "_area_path": "Optional. Where new items land, e.g. \"Project\\\\Team A\". Blank = the project's root area, which shows on the default team's backlog. A team only sees items under its own area paths.",
+    "area_path": "",
+
+    "_work_item_types": "Type NAMES for each projected level. They depend on the project's process: the intent level is \"User Story\" (Agile), \"Product Backlog Item\" (Scrum), \"Issue\" (Basic) or \"Requirement\" (CMMI). In Agile, \"Issue\" is an impediment — not a story. Stories are parented straight to the Epic (the Feature level is skipped); new teams have the Epics backlog level off until Team settings → Backlogs turns it on.",
+    "work_item_types": {
+      "epic": "Epic",
+      "intent": "User Story",
+      "open_question": "Task"
+    },
+
+    "_status_map": "Ledger status token → a state CATEGORY (Proposed, InProgress, Resolved, Completed, Removed): the adapter sets the first state the type lists in that category, so one map fits every process. To pin an exact state name instead, use {\"state\": \"<name>\"} (e.g. {\"state\": \"Resolved\"} for 🔄 in Agile). Basic has no Removed category: 🚫 there gets the removed tag below plus a comment, reported as degraded.",
+    "status_map": {
+      "⬜": "Proposed",
+      "🔧": "InProgress",
+      "✅": "Completed",
+      "🔄": "Proposed",
+      "🚫": "Removed"
+    },
+
+    "_fields": "Optional custom-field REFERENCE names (e.g. Custom.ScopeHash), found by display name via the discovery op. Blank = tag-only identity for that stamp.",
+    "fields": {
+      "scope_hash": "",
+      "intent_id": ""
+    },
+
+    "_tags": "Identity and signal tags. ADO tags are whole-value and case-insensitive, and can't contain \";\".",
+    "tags": {
+      "intent_prefix": "intent:",
+      "epic_prefix": "epic:",
+      "open_question_prefix": "open-question:",
+      "scope_drift": "scope-drift",
+      "removed": "ql:removed"
+    }
+  }
+}
