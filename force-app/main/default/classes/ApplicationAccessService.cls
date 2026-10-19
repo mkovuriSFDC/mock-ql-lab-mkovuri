@@ -6,8 +6,9 @@
  *
  * Recomputes desired state rather than reacting to single events, so it is
  * idempotent and handles several assessments per practitioner.
- * Runs without sharing: portal users can't read share objects, and the
- * recompute must see every assessment on the application.
+ * Runs without sharing and in system mode (explicit, since API 67.0 defaults
+ * to user mode): the trigger can fire from a practitioner's own action, and
+ * portal users can't read share objects or every assessment on the application.
  */
 public without sharing class ApplicationAccessService {
 
@@ -29,13 +30,14 @@ public without sharing class ApplicationAccessService {
             WHERE Subsidy_Application__c IN :ids
                 AND Practitioner__c != null
                 AND Status__c IN :ASSIGNED_STATUSES
+            WITH SYSTEM_MODE
         ];
         Set<Id> contactIds = new Set<Id>();
         for (Assessment__c a : assigned) {
             contactIds.add(a.Practitioner__c);
         }
         Map<Id, Id> userIdByContactId = new Map<Id, Id>();
-        for (User u : [SELECT Id, ContactId FROM User WHERE ContactId IN :contactIds AND IsActive = true]) {
+        for (User u : [SELECT Id, ContactId FROM User WHERE ContactId IN :contactIds AND IsActive = true WITH SYSTEM_MODE]) {
             userIdByContactId.put(u.ContactId, u.Id);
         }
 
@@ -53,6 +55,7 @@ public without sharing class ApplicationAccessService {
             SELECT Id, ParentId, UserOrGroupId
             FROM Subsidy_Application__Share
             WHERE ParentId IN :ids AND RowCause = :ROW_CAUSE
+            WITH SYSTEM_MODE
         ]) {
             String k = key(s.ParentId, s.UserOrGroupId);
             if (desired.contains(k)) {
@@ -76,10 +79,10 @@ public without sharing class ApplicationAccessService {
         }
 
         if (!toDelete.isEmpty()) {
-            delete toDelete;
+            delete as system toDelete;
         }
         if (!toInsert.isEmpty()) {
-            insert toInsert;
+            insert as system toInsert;
         }
     }
 

@@ -6,7 +6,7 @@
 public without sharing class ApplicationShareRecalc implements Database.Batchable<SObject> {
 
     public Database.QueryLocator start(Database.BatchableContext context) {
-        return Database.getQueryLocator([SELECT Id FROM Subsidy_Application__c]);
+        return Database.getQueryLocator('SELECT Id FROM Subsidy_Application__c', AccessLevel.SYSTEM_MODE);
     }
 
     public void execute(Database.BatchableContext context, List<Subsidy_Application__c> scope) {

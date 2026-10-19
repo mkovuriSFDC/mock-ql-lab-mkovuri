@@ -46,9 +46,13 @@ private class PractitionerVisibilityTest {
             }
             Assert.isTrue(accounts.isEmpty(), 'Patient account, date of birth and address are unreachable');
 
-            List<Subsidy_Application__c> apps = [SELECT Id, Patient__c FROM Subsidy_Application__c];
-            SObjectAccessDecision decision = Security.stripInaccessible(AccessType.READABLE, apps);
-            Assert.isTrue(decision.getRemovedFields().get('Subsidy_Application__c').contains('Patient__c'), 'Patient lookup is stripped');
+            Boolean lookupDenied = false;
+            try {
+                List<Subsidy_Application__c> apps = [SELECT Id, Patient__c FROM Subsidy_Application__c WITH USER_MODE];
+            } catch (QueryException e) {
+                lookupDenied = true;
+            }
+            Assert.isTrue(lookupDenied, 'Querying the patient lookup is refused for practitioners');
         }
     }
 

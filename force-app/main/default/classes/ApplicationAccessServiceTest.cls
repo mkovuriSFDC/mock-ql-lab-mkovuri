@@ -28,8 +28,7 @@ private class ApplicationAccessServiceTest {
             Assert.areEqual(0, PtsfTestData.shareCount(app, p1), 'Timed out revokes');
 
             setStatus(a, 'Allocated');
-            a.Practitioner__c = s.practitioner2.Id;
-            update a;
+            update new Assessment__c(Id = a.Id, Practitioner__c = s.practitioner2.Id);
             Assert.areEqual(0, PtsfTestData.shareCount(app, p1), 'Previous practitioner loses access');
             Assert.areEqual(1, PtsfTestData.shareCount(app, p2), 'New practitioner gains access');
 
@@ -63,11 +62,12 @@ private class ApplicationAccessServiceTest {
 
             Test.startTest();
             insert assessments;
+            List<Assessment__c> declines = new List<Assessment__c>();
             for (Assessment__c a : assessments) {
-                a.Status__c = 'Declined';
+                declines.add(new Assessment__c(Id = a.Id, Status__c = 'Declined'));
             }
             Integer sharesAfterInsert = countShares(apps, s.practitioner1User.Id);
-            update assessments;
+            update declines;
             Assert.isTrue(Limits.getQueries() <= 12, 'Recompute stays bulk-safe: ' + Limits.getQueries() + ' queries');
             Test.stopTest();
 
@@ -92,9 +92,9 @@ private class ApplicationAccessServiceTest {
         Assert.areEqual(1, PtsfTestData.shareCount(s.appA1.Id, s.practitioner1User.Id), 'Recalculation restores the share');
     }
 
+    /** Updates only the status: the master-detail field isn't reparentable, so it can't ride an update in user mode. */
     private static void setStatus(Assessment__c a, String status) {
-        a.Status__c = status;
-        update a;
+        update new Assessment__c(Id = a.Id, Status__c = status);
     }
 
     private static Integer countShares(List<Subsidy_Application__c> apps, Id userId) {

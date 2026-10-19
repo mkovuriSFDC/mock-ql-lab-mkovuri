@@ -82,8 +82,28 @@ public class PtsfTestData {
             owner = newUser(profileId('System Administrator'), 'owner', role.Id, null);
             insert owner;
             assignPermissionSet(new List<User>{ owner }, 'PTSF_Staff_Core');
+            grantTestMedicalHistoryAccess(owner);
         }
         return owner;
+    }
+
+    /**
+     * Test-only stand-in for the system owner pool's access to Medical History.
+     * No deployed permission set grants it (decision 0002, INT-002), but record
+     * DML under runAs checks the running user's field access.
+     */
+    private static void grantTestMedicalHistoryAccess(User owner) {
+        PermissionSet ps = new PermissionSet(Name = 'Test_Owner_Medical_History_' + nextSuffix(), Label = 'Test Owner Medical History');
+        insert ps;
+        insert new ObjectPermissions(
+            ParentId = ps.Id, SobjectType = 'Medical_History__c',
+            PermissionsRead = true, PermissionsCreate = true, PermissionsEdit = true
+        );
+        insert new List<FieldPermissions>{
+            new FieldPermissions(ParentId = ps.Id, SobjectType = 'Medical_History__c', Field = 'Medical_History__c.Patient__c', PermissionsRead = true, PermissionsEdit = true),
+            new FieldPermissions(ParentId = ps.Id, SobjectType = 'Medical_History__c', Field = 'Medical_History__c.Subsidy_Application__c', PermissionsRead = true, PermissionsEdit = true)
+        };
+        insert new PermissionSetAssignment(AssigneeId = owner.Id, PermissionSetId = ps.Id);
     }
 
     public static Assessment__c newAssessment(Subsidy_Application__c app, Contact practitioner, String status) {
