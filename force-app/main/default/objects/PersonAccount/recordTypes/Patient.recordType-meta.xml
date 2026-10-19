@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Patient</fullName>
+    <active>true</active>
+    <description>A patient applying for travel support.</description>
+    <label>Patient</label>
+</RecordType>

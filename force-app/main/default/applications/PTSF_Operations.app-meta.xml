@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <formFactors>Large</formFactors>
+    <label>PTSF Operations</label>
+    <navType>Standard</navType>
+    <tabs>Subsidy_Application__c</tabs>
+    <tabs>Assessment__c</tabs>
+    <tabs>Allocation_Attempt__c</tabs>
+    <tabs>Practitioner_Registration__c</tabs>
+    <tabs>Treatment_Type__c</tabs>
+    <tabs>standard-Account</tabs>
+    <tabs>standard-Contact</tabs>
+    <uiType>Lightning</uiType>
+</CustomApplication>

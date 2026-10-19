@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Patient_Phone__c</fullName>
+    <description>Shows the patient's phone number without granting access to the patient account (decisions/2026-10-20-int-003-sharing-model.md).</description>
+    <formula>Patient__r.Phone</formula>
+    <label>Patient Phone</label>
+    <type>Text</type>
+</CustomField>

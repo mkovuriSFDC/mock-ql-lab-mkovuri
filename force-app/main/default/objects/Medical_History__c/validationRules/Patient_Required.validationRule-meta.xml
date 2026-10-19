@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Patient_Required</fullName>
+    <active>true</active>
+    <description>The patient sharing set keys on this lookup.</description>
+    <errorConditionFormula>ISBLANK(Patient__c)</errorConditionFormula>
+    <errorDisplayField>Patient__c</errorDisplayField>
+    <errorMessage>Select the patient this medical history belongs to.</errorMessage>
+</ValidationRule>
