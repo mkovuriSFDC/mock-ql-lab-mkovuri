@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Profile xmlns="http://soap.sforce.com/2006/04/metadata">
+    <custom>true</custom>
+    <description>Patients on the patient site (high-volume Customer Community licence). Access comes from PTSF_Patient_Access and the PTSF_Patient_Records sharing set.</description>
+    <userLicense>Customer Community</userLicense>
+</Profile>

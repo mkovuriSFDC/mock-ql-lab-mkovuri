@@ -76,6 +76,11 @@ Features that must be enabled before metadata referencing them will deploy or be
 Accounts, multi-currency, a cloud/feature license). Note ⛔ for irreversible enablements. Cross-link
 the PR/phase that introduced each.
 
+- **⚙️🔁 Account business record type** (INT-003): Setup → Object Manager → Account → Record Types → New, label `Practice`. Person Accounts can't be enabled without one. (The `Practice` metadata in the deploy then matches it.)
+- **⚙️⛔ Enable Person Accounts** (INT-003): Setup → Person Accounts → enable. **Permanent.** Verify: `sf sobject describe -s Account` lists `IsPersonAccount`.
+- **⚙️🔁 Enable Digital Experiences** (INT-003): Setup → Digital Experiences → Settings → Enable. The patient sharing set needs it.
+- **⚙️🔁 Interim record owner with a role** (INT-003): create a top-level role `PTSF Record Owners` and an active internal user in it, to own patient and practice accounts until INT-004's owner pools replace it. Accounts with site users need an owner who has a role.
+
 ### 2. 📦 Deploy metadata
 ```bash
 sf project deploy start -o <org-alias>
@@ -83,6 +88,10 @@ sf project deploy start -o <org-alias>
 Deploys objects/fields, Apex, Flows, permission sets, layouts, apps, etc. When deploying a subset,
 deploy **classes/fields before Flows** that reference them — `rollbackOnError` is whole-transaction
 and will silently un-deploy a class if a co-bundled Flow fails (`build-notes.md`).
+
+For INT-003, deploy the schema and access metadata (objects, profiles, permission sets, sharing set, tabs, app) before the Apex (`classes/`, `triggers/`), so a test failure can't roll back the schema.
+
+- **⚙️🔁 Turn off hierarchy access on Medical History** (INT-003; decision 0002): Setup → Sharing Settings → Edit → uncheck **Grant Access Using Hierarchies** for Medical History. It isn't settable through metadata. Verify: `PtsfSharingModelTest.hierarchyDoesNotGrantMedicalHistory` passes.
 
 ### 3. ⚙️ Create Setup-data records the code reads
 Records that are **not** deployable metadata. Pattern: the deployed Apex falls back to a hardcoded

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Profile xmlns="http://soap.sforce.com/2006/04/metadata">
+    <custom>true</custom>
+    <description>Practitioners on the practitioner site (Customer Community Plus licence). Access comes from PTSF_Practitioner_Access and Apex managed shares.</description>
+    <userLicense>Customer Community Plus</userLicense>
+</Profile>

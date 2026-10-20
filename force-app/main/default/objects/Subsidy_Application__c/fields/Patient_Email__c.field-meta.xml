@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Patient_Email__c</fullName>
+    <description>Shows the patient's email address without granting access to the patient account (decisions/2026-10-20-int-003-sharing-model.md).</description>
+    <formula>Patient__r.PersonEmail</formula>
+    <label>Patient Email</label>
+    <type>Text</type>
+</CustomField>
