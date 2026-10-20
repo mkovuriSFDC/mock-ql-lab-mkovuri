@@ -17,13 +17,13 @@ authored: 2026-10-20
 
 | ID | Criterion (source) | How proven | Type | Sign-off |
 |----|--------------------|------------|------|----------|
-| INT-003-C1 | Core records exist: patient and practice record types, practitioner contact, treatment type, practitioner registration, subsidy application, assessment, medical history, allocation attempt (build target 1) | org-probe | ✅ | (verify) |
+| INT-003-C1 | Core records exist: patient and practice record types, practitioner contact, treatment type, practitioner registration, subsidy application, assessment, medical history, allocation attempt (build target 1) | org-probe | ✅ | (verify — green, 2026-10-20) |
 | INT-003-C2 | A patient reads exactly their own applications, and none belonging to another patient (build target 2; acceptance: Aiko sees her two applications) | `PatientVisibilityTest.patientSeesOnlyOwnApplications` | ✅ | (CI) |
 | INT-003-C3 | A patient reads their own medical history through their patient record, and no other patient's (build target 2) | `PatientVisibilityTest.patientSeesOnlyOwnMedicalHistory` | ✅ | (CI) |
 | INT-003-C4 | A patient reads their own profile and no other patient's account (outcome) | `PatientVisibilityTest.patientSeesOnlyOwnProfile` | ✅ | (CI) |
 | INT-003-C5 | A patient reads no assessments, allocation attempts or practitioner registrations (acceptance: "nothing belonging to any other patient"; design Q-design-2) | `PatientVisibilityTest.patientCannotReadAssessmentsOrAllocations` | ✅ | (CI) |
 | INT-003-C6 | An assigned practitioner reads the patient's name, phone and email and the service description on the application (build target 3; acceptance: Dr. Okafor) | `PractitionerVisibilityTest.assignedPractitionerReadsContactDetails` | ✅ | (CI) |
-| INT-003-C7 | The practitioner permission set grants field read on the application's four allowed fields only (build target 3) | org-probe | ✅ | (verify) |
+| INT-003-C7 | The practitioner permission set grants field read on the application's four allowed fields only (build target 3) | org-probe | ✅ | (verify — green, 2026-10-20) |
 | INT-003-C8 | An assigned practitioner can't read the patient's account, so not their date of birth, address or insurance details, and can't read the application's patient lookup (guardrail 3; acceptance) | `PractitionerVisibilityTest.practitionerCannotReadPatientAccount` | ✅ | (CI) |
 | INT-003-C9 | An assigned practitioner reads every assessment on the application, including another practitioner's specialist assessment (build target 4; acceptance) | `PractitionerVisibilityTest.practitionerReadsAllAssessmentsOnAssignedApplication` | ✅ | (CI) |
 | INT-003-C10 | A practitioner with no assigned-status assessment on an application reads neither it nor its assessments (build target 3) | `PractitionerVisibilityTest.unassignedPractitionerReadsNothing` | ✅ | (CI) |
@@ -35,8 +35,8 @@ authored: 2026-10-20
 | INT-003-C16 | The patient profile uses the Customer Community licence and the practitioner profile uses Customer Community Plus (guardrail 2) | `PtsfSharingModelTest.profilesUseDecidedLicences` | ✅ | (CI) |
 | INT-003-C17 | Role-hierarchy users above the record owner don't gain medical history access (design; decision 0002) | `PtsfSharingModelTest.hierarchyDoesNotGrantMedicalHistory` | ✅ | (CI) |
 | INT-003-C18 | No INT-003 permission set grants access to medical history to practitioners or internal staff; time-bound access is left to INT-001 (out of scope 1) | `PtsfSharingModelTest.noInt003PermsetGrantsMedicalHistory` | ✅ | (CI) |
-| INT-003-C19 | Relationship shapes: assessment is master-detail to the application; medical history and allocation attempt are lookups (design; decision 2026-10-20-int-003-sharing-model) | org-probe | ✅ | (verify) |
-| INT-003-C20 | Each custom object has a tab and appears in the PTSF Operations app (cascading work) | org-probe | ✅ | (verify) |
+| INT-003-C19 | Relationship shapes: assessment is master-detail to the application; medical history and allocation attempt are lookups (design; decision 2026-10-20-int-003-sharing-model) | org-probe | ✅ | (verify — green, 2026-10-20) |
+| INT-003-C20 | Each custom object has a tab and appears in the PTSF Operations app (cascading work) | org-probe | ✅ | ⚠ org not verified |
 | INT-003-C21 | Assessors see applications in their office scope only (build target 5; acceptance: Ravi sees Singapore-office applications only) | Blocked on Q-004 | ⛔ | _blocked: Q-004_ |
 | INT-003-C22 | Managers see applications in their office and region scope (build target 5) | Blocked on Q-004 | ⛔ | _blocked: Q-004_ |
 | INT-003-C23 | Aiko signs in to the patient site and sees her two applications on screen (acceptance, signed-in experience) | Manual scene A, once INT-012 delivers patient pages | ⛔ | _blocked: INT-012_ |
